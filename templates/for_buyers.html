@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}For Buyers - Livestock Monitor{% endblock title %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section Specific to Buyers */
+    .buyers-hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Auth Buttons Hover Effects */
+    .auth-buttons .btn {
+        transition: all 0.3s ease;
+    }
+
+    .auth-buttons .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Process Steps Animation */
+    .process-step {
+        transition: transform 0.3s ease;
+    }
+
+    .process-step:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Custom Blue Theme for Buyers (overriding/adding to Bootstrap) */
+    .bg-blue-50 { background-color: #eff6ff; }
+    .bg-blue-600 { background-color: #2563eb; }
+    .text-blue-600 { color: #2563eb; }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="buyers-hero text-white py-5" style="padding-top: 80px; padding-bottom: 80px;">
+        <div class="container px-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Source Quality Livestock Directly from Farmers</h1>
+                    <p class="fs-5 mb-5">Access a wide selection of healthy, verified livestock with complete transparency and traceability.</p>
+                    
+                    <a href="#" class="btn btn-green fw-medium py-3 px-5 fs-6 mb-4">
+                        Browse Available Livestock
+                    </a>
+                    
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 auth-buttons">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-light text-success fw-medium py-2 px-4">
+                                Go to My Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-outline-light fw-medium py-2 px-4">
+                                Log In as Buyer
+                            </a>
+                            <a href="{% url 'register' %}" class="btn btn-light text-success fw-medium py-2 px-4">
+                                Register as Buyer
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white">
+        <div class="container px-4">
+            <h2 class="fs-2 fw-bold text-center text-dark mb-2">How it Works for Buyers</h2>
+            <h3 class="fs-4 fw-semibold text-center text-muted mb-5">Source with Confidence</h3>
+            
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="process-step bg-blue-50 p-5 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-blue-600 text-white rounded-circle fw-bold fs-5" style="width: 70px; height: 70px;">1</div>
+                        <h3 class="fs-5 fw-semibold mb-3">Search & Discover</h3>
+                        <p class="text-muted">Use our advanced filters to find livestock by type, breed, location, health status, and price range.</p>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4">
+                    <div class="process-step bg-blue-50 p-5 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-blue-600 text-white rounded-circle fw-bold fs-5" style="width: 70px; height: 70px;">2</div>
+                        <h3 class="fs-5 fw-semibold mb-3">Verify & Evaluate</h3>
+                        <p class="text-muted">Access complete health records, vaccination history, and farmer reputation before making decisions.</p>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4">
+                    <div class="process-step bg-blue-50 p-5 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-blue-600 text-white rounded-circle fw-bold fs-5" style="width: 70px; height: 70px;">3</div>
+                        <h3 class="fs-5 fw-semibold mb-3">Purchase & Receive</h3>
+                        <p class="text-muted">Secure your purchase, arrange delivery, and receive healthy livestock with our quality guarantee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: #f9fafb;">
+        <div class="container px-4">
+            <h2 class="fs-2 fw-bold text-center text-dark mb-5">Benefits for Buyers</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="fas fa-search text-blue-600 fs-5 mt-1 me-3"></i>
+                            <h3 class="fs-5 fw-semibold">Transparent Information</h3>
+                        </div>
+                        <p class="text-muted">Access complete health records, vaccination history, and farmer verification before purchase.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="fas fa-handshake text-blue-600 fs-5 mt-1 me-3"></i>
+                            <h3 class="fs-5 fw-semibold">Direct from Farmers</h3>
+                        </div>
+                        <p class="text-muted">Buy directly from verified farmers, eliminating middlemen and ensuring better prices.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="fas fa-shield-alt text-blue-600 fs-5 mt-1 me-3"></i>
+                            <h3 class="fs-5 fw-semibold">Quality Assurance</h3>
+                        </div>
+                        <p class="text-muted">Our verification process ensures you receive healthy livestock that meets your specifications.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="fas fa-truck text-blue-600 fs-5 mt-1 me-3"></i>
+                            <h3 class="fs-5 fw-semibold">Secure Delivery</h3>
+                        </div>
+                        <p class="text-muted">We coordinate safe and reliable transportation for your purchased livestock across Rwanda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: #f0fdf4;">
+        <div class="container px-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="fs-4 fw-bold text-dark mb-3">Ready to Find Quality Livestock?</h2>
+                    <p class="text-muted mb-4">Join thousands of buyers in our livestock marketplace</p>
+                    <a href="{% url 'register' %}" class="btn btn-green fw-medium py-3 px-5">Get Started Today</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

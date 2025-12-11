@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Marketplace - Browse Livestock{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Browse Livestock</h2>
+            <p class="text-muted">Verified animals available for purchase directly from farmers.</p>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <select class="form-select w-auto">
+                <option>All Species</option>
+                <option>Cattle</option>
+                <option>Goats</option>
+                <option>Sheep</option>
+            </select>
+            <button class="btn btn-outline-secondary"><i class="fas fa-filter"></i></button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for item in listings %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm overflow-hidden item-card">
+                    <div class="ratio ratio-4x3 bg-light position-relative">
+                        {% if item.images.first %}
+                            <img src="{{ item.images.first.image.url }}" class="object-fit-cover" alt="{{ item.species.species_name }}">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center text-muted h-100">
+                                <i class="fas fa-paw fa-3x opacity-25"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span class="badge bg-white text-dark shadow-sm">
+                                {% if item.breed %}{{ item.breed.breed_name }}{% else %}{{ item.species.species_name }}{% endif %}
+                            </span>
+                        </div>
+                        <div class="position-absolute bottom-0 start-0 p-2">
+                            <span class="badge bg-success shadow-sm">Verified</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold m-0 text-success">
+                                {% if item.price %}RWF {{ item.price }}{% else %}Contact for Price{% endif %}
+                            </h5>
+                        </div>
+                        
+                        <p class="card-text text-muted small mb-3 line-clamp-2" style="min-height: 40px;">
+                            {{ item.description|default:"No description provided."|truncatechars:60 }}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center small text-muted mb-3 pt-3 border-top">
+                            <span><i class="fas fa-map-marker-alt me-1"></i> {{ item.farmer.farm_location|default:"Rwanda" }}</span>
+                            <span><i class="fas fa-weight me-1"></i> {{ item.weight|default:"--" }}kg</span>
+                        </div>
+
+                        <div class="d-grid">
+                            <a href="{% url 'livestock:livestock_detail' pk=item.pk %}" class="btn btn-outline-success btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-3">
+                    <i class="fas fa-box-open text-muted fs-1 opacity-25"></i>
+                </div>
+                <h4 class="text-muted">No livestock currently for sale.</h4>
+                <p class="text-muted">Check back later or register as a farmer to list items.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Hover effect for cards */
+    .item-card { transition: transform 0.2s; }
+    .item-card:hover { transform: translateY(-5px); }
+</style>
+{% endblock content %}

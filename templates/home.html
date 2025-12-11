@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Process Steps */
+    .process-step {
+        transition: transform 0.3s ease;
+    }
+
+    .process-step:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="hero text-white py-5" style="padding-top: 80px; padding-bottom: 80px;">
+        <div class="container px-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Connect Farmers & Buyers in Rwanda</h1>
+                    <p class="fs-5 mb-5">The premier marketplace for livestock trading. Buy and sell cattle, goats, sheep and more with confidence.</p>
+                    
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                        <a href="{% url 'for_farmers' %}" class="btn btn-green fw-medium py-3 px-5 fs-6">
+                            Start Selling
+                        </a>
+                        <a href="{% url 'for_buyers' %}" class="btn btn-light text-success fw-medium py-3 px-5 fs-6">
+                            Browse Livestock
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white">
+        <div class="container px-4">
+            <h2 class="fs-2 fw-bold text-center text-dark mb-5">Why Choose Our Marketplace?</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="bg-light p-4 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success bg-opacity-10 rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shield-alt text-success fs-4"></i>
+                        </div>
+                        <h3 class="fs-5 fw-semibold mb-3">Verified Sellers</h3>
+                        <p class="text-muted">All our farmers are verified to ensure quality and trust in every transaction.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="bg-light p-4 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success bg-opacity-10 rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="fas fa-truck text-success fs-4"></i>
+                        </div>
+                        <h3 class="fs-5 fw-semibold mb-3">Secure Delivery</h3>
+                        <p class="text-muted">We provide safe and reliable transportation for livestock across Rwanda.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="bg-light p-4 rounded h-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success bg-opacity-10 rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="fas fa-hand-holding-usd text-success fs-4"></i>
+                        </div>
+                        <h3 class="fs-5 fw-semibold mb-3">Fair Pricing</h3>
+                        <p class="text-muted">Transparent pricing with no hidden fees. Get the best value for your livestock.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container px-4">
+            <h2 class="fs-2 fw-bold text-center text-dark mb-5">How It Works</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-3 text-center process-step">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success text-white rounded-circle fw-bold fs-5" style="width: 60px; height: 60px;">1</div>
+                    <h3 class="fs-6 fw-semibold mb-2">Create Account</h3>
+                    <p class="text-muted small">Sign up as a farmer or buyer in minutes</p>
+                </div>
+
+                <div class="col-12 col-md-3 text-center process-step">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success text-white rounded-circle fw-bold fs-5" style="width: 60px; height: 60px;">2</div>
+                    <h3 class="fs-6 fw-semibold mb-2">List or Browse</h3>
+                    <p class="text-muted small">Farmers list livestock, buyers browse offerings</p>
+                </div>
+
+                <div class="col-12 col-md-3 text-center process-step">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success text-white rounded-circle fw-bold fs-5" style="width: 60px; height: 60px;">3</div>
+                    <h3 class="fs-6 fw-semibold mb-2">Connect & Negotiate</h3>
+                    <p class="text-muted small">Communicate directly and agree on terms</p>
+                </div>
+
+                <div class="col-12 col-md-3 text-center process-step">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4 bg-success text-white rounded-circle fw-bold fs-5" style="width: 60px; height: 60px;">4</div>
+                    <h3 class="fs-6 fw-semibold mb-2">Complete Transaction</h3>
+                    <p class="text-muted small">Secure payment and arrange delivery</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: #f0fdf4;">
+        <div class="container px-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="fs-4 fw-bold text-dark mb-3">Ready to Transform Your Farming?</h2>
+                    <p class="text-muted mb-4">Join thousands of farmers and buyers in our livestock marketplace</p>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-green fw-medium py-3 px-5">Go to Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-green fw-medium py-3 px-5">Get Started Today</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
