@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h2>My Orders</h2>
+    <hr>
+
+    {% if orders %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>RWF {{ order.total_amount }}</td>
+                    <td>{{ order.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    {% else %}
+        <p>No orders yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

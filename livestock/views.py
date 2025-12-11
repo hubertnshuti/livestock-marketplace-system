@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import LivestockItemForm, LivestockImageForm
 from .models import LivestockItem, LivestockImage
+from .models import Order
 
 # 1. CREATE BASIC INFO (Step 1)
 @login_required
@@ -81,6 +82,15 @@ def livestock_detail(request, pk):
         'page_title': f"{livestock.species.species_name} Details"
     }
     return render(request, 'livestock_detail.html', context)
+
+@login_required
+def order_history(request):
+    buyer = request.user.buyer_profile # User must be Buyer
+    orders = Order.objects.filter(buyer=buyer).order_by('-created_at')
+
+    return render(request, 'order_history.html', {
+        'orders': orders
+    })
 
 
 
