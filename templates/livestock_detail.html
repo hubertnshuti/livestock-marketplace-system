@@ -91,10 +91,22 @@
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button class="btn btn-success btn-lg">
-                        <i class="fas fa-phone-alt me-2"></i> Contact Farmer
-                    </button>
-                    </div>
+                    {% if livestock.is_for_sale and livestock.status == 'available' %}
+                        <form method="POST" action="{% url 'livestock:place_order' pk=livestock.pk %}">
+                            {% csrf_token %}
+                            
+                            <input type="hidden" name="quantity" value="1">
+                            
+                            <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm">
+                                <i class="fas fa-handshake me-2"></i> Buy Now / Send Inquiry
+                            </button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg w-100" disabled>
+                            Item Not Available
+                        </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

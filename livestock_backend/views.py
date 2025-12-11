@@ -14,3 +14,6 @@ def for_buyers(request):
 
 def add_livestock(request):
     return render(request, 'add_livestock.html')
+
+def about(request):
+    return render(request, 'about.html')

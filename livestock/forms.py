@@ -37,3 +37,12 @@ class LivestockImageForm(forms.ModelForm):
     class Meta:
         model = LivestockImage
         fields = ['image']
+
+class SimpleOrderForm(forms.Form):
+    # Field for buyer to send a message
+    inquiry_message = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional: Ask about delivery or health records...'}),
+        required=False
+    )
+    # Hidden field for quantity (defaults to 1)
+    quantity = forms.IntegerField(initial=1, min_value=1, widget=forms.HiddenInput())

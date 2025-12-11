@@ -14,4 +14,7 @@ urlpatterns = [
     
     # NEW: Detail Page
     path('<int:pk>/', views.livestock_detail, name='livestock_detail'),
+
+    # Order Placement URL
+    path('<int:pk>/place-order/', views.place_order, name='place_order'),
 ]
