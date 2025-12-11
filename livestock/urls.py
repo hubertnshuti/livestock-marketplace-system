@@ -14,5 +14,4 @@ urlpatterns = [
     
     # NEW: Detail Page
     path('<int:pk>/', views.livestock_detail, name='livestock_detail'),
-    path('history/', views.order_history, name='order_history'),
 ]

@@ -83,26 +83,6 @@ def livestock_detail(request, pk):
     }
     return render(request, 'livestock_detail.html', context)
 
-@login_required
-def order_history(request):
-    buyer = request.user.buyer_profile # User must be Buyer
-    orders = Order.objects.filter(buyer=buyer).order_by('-created_at')
-
-    return render(request, 'order_history.html', {
-        'orders': orders
-    })
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
