@@ -27,7 +27,7 @@ class Breed(models.Model):
 class LivestockItem(models.Model):
     GENDER_CHOICES = (('male', 'Male'), ('female', 'Female'), ('unknown', 'Unknown'))
     HEALTH_STATUS_CHOICES = (('healthy', 'Healthy'), ('warning', 'Warning'), ('sick', 'Sick'), ('verified', 'Verified'))
-    STATUS_CHOICES = (('available', 'Available'), ('sold', 'Sold'), ('pending', 'Pending'), ('hidden', 'Hidden'))
+    STATUS_CHOICES = (('available', 'Available'), ('sold', 'Sold'), ('reserved', 'Reserved'), ('hidden', 'Hidden'))
 
     livestock_id = models.AutoField(primary_key=True)  # LivestockID PK
     farmer = models.ForeignKey('accounts.Farmer', on_delete=models.CASCADE, related_name='livestock_items')
@@ -106,10 +106,19 @@ class Order(models.Model):
     buyer = models.ForeignKey('accounts.Buyer', on_delete=models.CASCADE, related_name='orders')
     order_date = models.DateTimeField(default=timezone.now)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    ORDER_STATUS = (('pending', 'Pending'), ('confirmed', 'Confirmed'), ('shipped', 'Shipped'), ('delivered', 'Delivered'), ('cancelled', 'Cancelled'))
+    ORDER_STATUS = (
+        ('pending', 'Pending (In Cart)'), # Kept for temporary cart state
+        ('inquiry_sent', 'Inquiry Sent (Waiting for Farmer)'), # New state after checkout
+        ('approved', 'Order Approved (Ready for Payment/Delivery)'), # New state after farmer clicks yes
+        ('confirmed', 'Completed (Paid & Delivered)'),
+        ('cancelled', 'Cancelled')
+    )
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
-    PAYMENT_STATUS = (('pending', 'Pending'), ('paid', 'Paid'), ('refunded', 'Refunded'))
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pending')
+    PAYMENT_STATUS = (('pay_on_delivery', 'Pay on Delivery'), ('paid', 'Paid'))
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pay_on_delivery')
+    
+    delivery_address = models.TextField(blank=True, null=True, help_text="Where should this be delivered?")
+    contact_phone = models.CharField(max_length=15, blank=True, null=True, help_text="Phone number for delivery coordination")
 
     def __str__(self):
         return f"Order {self.order_id} by {self.buyer.user.username}"
@@ -135,3 +144,13 @@ class LivestockImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.livestock.tag_id}"
+    
+# WISHLIST MODEL
+class Wishlist(models.Model):
+    user = models.OneToOneField('accounts.Buyer', on_delete=models.CASCADE, related_name='wishlist')
+    items = models.ManyToManyField(LivestockItem, related_name='wishlists')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Wishlist for {self.user.user.username}"

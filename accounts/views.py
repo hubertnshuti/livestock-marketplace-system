@@ -1,217 +1,249 @@
-<<<<<<< HEAD
+# accounts/views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
-from .models import UserProfile
-# IMPORT LIVESTOCK MODELS to fetch data
-from livestock.models import LivestockItem, Order, OrderItem 
-from django.db.models import Sum
-
-=======
-# accounts/views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
-# CORRECT: Import only ACCOUNTS-RELATED forms and models
-from .models import UserProfile, Farmer, Buyer
+from django.db.models import Sum
 from .forms import (
-    RegisterForm, 
-    UserUpdateForm, 
-    ProfileUpdateForm, 
-    FarmerUpdateForm, 
-    BuyerUpdateForm
+    UserRegistrationForm,
+    LoginForm,
+    UserProfileForm,          
+    UserProfileUpdateForm,
+    FarmerProfileUpdateForm,
+    BuyerProfileUpdateForm,
+    ContactForm
 )
+from .models import UserProfile, Farmer, Buyer, ContactMessage
+
+# FIX: Import OrderItem and Order so they can be used in the dashboard logic
+from livestock.models import LivestockItem, OrderItem, Order
 
 
-# ------------------------
-# REGISTER VIEW
-# ------------------------
->>>>>>> 7e69cb7777706784fd40ea566681d39beed376ff
+# --- 1. REGISTRATION VIEW ---
 def register_view(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-<<<<<<< HEAD
-=======
-            user_type = form.cleaned_data["user_type"]
-            
-            # Create UserProfile 
-            UserProfile.objects.create(
-                user=user,
-                user_type=user_type
-            )
-
-            # Create Farmer or Buyer linked tables
-            if user_type == "farmer":
-                Farmer.objects.create(
-                    user=user,
-                    farm_name=f"{user.username}'s Farm"
-                )
-            else:
-                Buyer.objects.create(
-                    user=user,
-                    buyer_type="individual"
-                )
-
-            messages.success(request, f"Registration successful. Welcome!")
->>>>>>> 7e69cb7777706784fd40ea566681d39beed376ff
-            login(request, user)
-            return redirect("dashboard")
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, "Registration successful!")
+                
+                # Route based on user type
+                if hasattr(user, 'farmer_profile'):
+                    messages.info(request, "Welcome to your Farm Dashboard!")
+                    return redirect('dashboard')
+                else:
+                    messages.info(request, "Welcome to the Marketplace!")
+                    return redirect('livestock:marketplace')
+            except Exception as e:
+                messages.error(request, f"Registration error: {e}")
+                return redirect('register')
     else:
-        form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+        form = UserRegistrationForm()
+    return render(request, 'register.html', {'form': form})
 
+# --- 2. LOGIN VIEW ---
 def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("dashboard")
+            
+            # ATTRACTION LOGIC: Buyers go straight to Marketplace
+            try:
+                if user.userprofile.user_type == 'farmer':
+                    return redirect('dashboard')
+                else:
+                    return redirect('livestock:marketplace')
+            except:
+                # Fallback for admins/users without profile
+                return redirect('dashboard')
     else:
-        form = AuthenticationForm()
-    return render(request, "login.html", {"form": form})
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+# --- 3. LOGOUT VIEW ---
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 @login_required
 def dashboard(request):
-<<<<<<< HEAD
-    profile = request.user.profile
+    user = request.user
+   
+    # 1. Get the profile securely
+    try:
+        profile = user.userprofile
+    except:
+        # Graceful fallback if profile doesn't exist
+        profile = None
+    
+    context = {'profile': profile}
 
     # --- LOGIC FOR FARMERS ---
-    if profile.user_type == "farmer":
-        farmer = request.user.farmer_profile
-        
-        # 1. My Livestock Stats
-        total_livestock = farmer.livestock_items.count()
-        recent_listings = farmer.livestock_items.all().order_by('-listing_date')[:5]
-        
-        # 2. Incoming Orders (Sales)
-        # Get items owned by this farmer
-        my_items = farmer.livestock_items.all()
-        # Find OrderItems that reference these items
-        incoming_sales = OrderItem.objects.filter(livestock__in=my_items).select_related('order')
-        
-        # Count pending sales
-        active_alerts = incoming_sales.filter(order__order_status='pending_inquiry').count()
-        
-        # Calculate Sold count (items marked as sold)
-        sold_count = my_items.filter(status='sold').count()
-=======
-    user_profile = request.user.userprofile 
->>>>>>> 7e69cb7777706784fd40ea566681d39beed376ff
+    if profile and profile.user_type == 'farmer':
+        try:
+            # Get all items owned by this farmer
+            farmer_items = LivestockItem.objects.filter(farmer=user.farmer_profile)
+            
+            # 1. Total Livestock: Exclude 'sold' items as requested
+            context['total_livestock'] = farmer_items.exclude(status='sold').count()
+            
+            # 2. Sold Count: Count only 'sold' items
+            context['sold_count'] = farmer_items.filter(status='sold').count()
+            
+            # 3. Reserved Count: Count items currently in negotiation/delivery
+            context['reserved_count'] = farmer_items.filter(status='reserved').count()
 
-    if user_profile.user_type == "farmer":
-        farmer = getattr(request.user, 'farmer_profile', None) 
-        
-        context = {
-<<<<<<< HEAD
-            "profile": profile,
-            "total_livestock": total_livestock,
-            "recent_listings": recent_listings,
-            "active_alerts": active_alerts, # Pending Orders count
-            "sold_count": sold_count,
-            "incoming_sales": incoming_sales[:5] # Show last 5 inquiries
-        }
-        return render(request, "farmer_dashboard.html", context)
+            # 4. Recent Listings: For the table
+            context['recent_listings'] = farmer_items.order_by('-listing_date')[:5]
+            
+            # 5. Inquiries: Find order items related to this farmer's livestock
+            inquiries = OrderItem.objects.filter(livestock__in=farmer_items)
+            
+            # 6. New Inquiries Count: Only count orders with status 'inquiry_sent'
+            # This matches the {{ new_inquiries_count }} variable in your template
+            context['new_inquiries_count'] = inquiries.filter(order__order_status='inquiry_sent').count()
+            
+            # 7. Incoming Sales list (optional, if used in sidebar or extra widgets)
+            context['incoming_sales'] = inquiries.order_by('-order__order_date')[:5]
+           
+        except Exception as e:
+            print(f"Dashboard Error: {e}")
+            context['total_livestock'] = 0
+            context['new_inquiries_count'] = 0
+            context['reserved_count'] = 0
+           
+        return render(request, 'farmer_dashboard.html', context)
 
     # --- LOGIC FOR BUYERS ---
-    elif profile.user_type == "buyer":
-        buyer = request.user.buyer_profile
-        
-        # 1. Fetch Orders placed by this buyer
-        my_orders = Order.objects.filter(buyer=buyer).order_by('-order_date')
-        
-        # 2. Stats
-        active_orders_count = my_orders.exclude(order_status='completed').count()
-        
-        # Calculate Total Spent (Sum of total_amount)
-        total_spent = my_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-        
-        context = {
-            "profile": profile,
-            "orders": my_orders[:5], # Recent 5 orders
-            "active_orders_count": active_orders_count,
-            "total_spent": total_spent,
-            "saved_items_count": 0 # Placeholder for wishlist
-=======
-            "profile": user_profile,
-            # Placeholder for future dashboard data
-        }
-        return render(request, "farmer_dashboard.html", context)
+    elif profile and profile.user_type == 'buyer':
+        try:
+            buyer_orders = Order.objects.filter(buyer=user.buyer_profile)
+           
+            # Count active orders (Inquiry Sent or Approved)
+            # We exclude 'pending' (cart) and 'confirmed' (completed history)
+            active_orders = buyer_orders.filter(order_status__in=['inquiry_sent', 'approved']).count()
+           
+            # Calculate total spent (only where payment is strictly 'paid')
+            total_spent = buyer_orders.filter(payment_status='paid').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+           
+            context['active_orders_count'] = active_orders
+            context['total_spent'] = total_spent
+            context['orders'] = buyer_orders.order_by('-order_date')[:5] # Show recent 5 orders
+           
+        except Exception as e:
+            print(f"Buyer Dashboard Error: {e}")
+            context['active_orders_count'] = 0
+            context['total_spent'] = 0
+            
+        return render(request, 'buyer_dashboard.html', context)
 
-    elif user_profile.user_type == "buyer":
-        buyer = getattr(request.user, 'buyer_profile', None) 
-        
-        context = {
-            "profile": user_profile,
-            # Placeholder for future dashboard data
->>>>>>> 7e69cb7777706784fd40ea566681d39beed376ff
-        }
-        return render(request, "buyer_dashboard.html", context)
+    # --- FALLBACK ---
+    messages.error(request, "Profile not found. Please contact support.")
+    return redirect('home')
 
-    return render(request, "dashboard.html", {"profile": user_profile})
-
-
-# ------------------------
-# PROFILE VIEW
-# ------------------------
+# --- 5. PROFILE VIEW ---
 @login_required
 def profile(request):
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    
-    farmer_form = None
-    buyer_form = None
+    user = request.user
 
-    if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=user_profile)
-        
-        # Handle Role Specifics
-        if hasattr(request.user, 'farmer_profile'):
-            farmer_form = FarmerUpdateForm(request.POST, instance=request.user.farmer_profile)
-        elif hasattr(request.user, 'buyer_profile'):
-            buyer_form = BuyerUpdateForm(request.POST, instance=request.user.buyer_profile)
+    # Get or create base profile
+    try:
+        profile_instance = user.userprofile
+    except UserProfile.DoesNotExist:
+        profile_instance = UserProfile.objects.create(
+            user=user,
+            user_type="buyer",  # default if somehow missing
+        )
 
-        # Validation Check
-        if u_form.is_valid() and p_form.is_valid():
-            role_valid = True
-            if farmer_form and not farmer_form.is_valid(): role_valid = False
-            if buyer_form and not buyer_form.is_valid(): role_valid = False
-            
-            if role_valid:
-                u_form.save()
-                p_form.save()
-                if farmer_form: farmer_form.save()
-                if buyer_form: buyer_form.save()
-                
-                messages.success(request, f'Your account has been updated!')
-                return redirect('profile')
-        else:
-            messages.error(request, 'Error updating profile. Please check the fields.')
+    # Prepare role-specific instance (farmer or buyer)
+    farmer_instance = None
+    buyer_instance = None
 
+    if profile_instance.user_type == "farmer":
+        farmer_instance, _ = Farmer.objects.get_or_create(user=user, defaults={
+            "farm_name": user.username,
+        })
+    elif profile_instance.user_type == "buyer":
+        buyer_instance, _ = Buyer.objects.get_or_create(user=user)
+
+    if request.method == "POST":
+        profile_form = UserProfileUpdateForm(
+            request.POST, request.FILES, instance=profile_instance
+        )
+
+        farmer_form = None
+        buyer_form = None
+
+        if profile_instance.user_type == "farmer" and farmer_instance:
+            farmer_form = FarmerProfileUpdateForm(
+                request.POST, instance=farmer_instance
+            )
+        elif profile_instance.user_type == "buyer" and buyer_instance:
+            buyer_form = BuyerProfileUpdateForm(
+                request.POST, instance=buyer_instance
+            )
+
+        # Validate both forms that exist
+        forms_valid = profile_form.is_valid()
+        if farmer_form is not None:
+            forms_valid = forms_valid and farmer_form.is_valid()
+        if buyer_form is not None:
+            forms_valid = forms_valid and buyer_form.is_valid()
+
+        if forms_valid:
+            profile_form.save()
+            if farmer_form is not None:
+                farmer_form.save()
+            if buyer_form is not None:
+                buyer_form.save()
+
+            messages.success(request, "Profile updated successfully.")
+            return redirect("profile")
     else:
-        # GET Request - Pre-fill forms with current data
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=user_profile)
-        
-        if hasattr(request.user, 'farmer_profile'):
-            farmer_form = FarmerUpdateForm(instance=request.user.farmer_profile)
-        elif hasattr(request.user, 'buyer_profile'):
-            buyer_form = BuyerUpdateForm(instance=request.user.buyer_profile)
+        profile_form = UserProfileUpdateForm(instance=profile_instance)
+        farmer_form = None
+        buyer_form = None
+
+        if profile_instance.user_type == "farmer" and farmer_instance:
+            farmer_form = FarmerProfileUpdateForm(instance=farmer_instance)
+        elif profile_instance.user_type == "buyer" and buyer_instance:
+            buyer_form = BuyerProfileUpdateForm(instance=buyer_instance)
 
     context = {
-        'u_form': u_form,
-        'p_form': p_form,
-        'farmer_form': farmer_form,
-        'buyer_form': buyer_form,
-        'is_farmer': user_profile.user_type == 'farmer'
+        "profile_form": profile_form,
+        "farmer_form": farmer_form,
+        "buyer_form": buyer_form,
+        "profile": profile_instance,
     }
+    return render(request, "profile.html", context)
 
-    return render(request, 'profile.html', context)
+# --- 6. CONTACT VIEW ---
+def contact_view(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()  # saves ContactMessage in DB
+            messages.success(request, "Thank you. Your message has been sent.")
+            return redirect("contact")
+    else:
+        form = ContactForm()
+
+    return render(request, "contact.html", {"form": form})
+
+
+
+def disclaimer_view(request):
+    return render(request, "disclaimer.html")
+
+def privacy_policy_view(request):
+    return render(request, "privacy_policy.html")
+
+def terms_of_use_view(request):
+    return render(request, "terms_of_use.html")
+
+
