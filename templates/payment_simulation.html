@@ -16,9 +16,8 @@
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <p class="text-muted mb-1">Total Amount</p>
-                        <h2 class="fw-bold text-dark">RWF {{ order.total_amount }}</h2>
-                        <span class="badge bg-light text-dark border">{{ item.species.species_name }} - {{ item.breed.breed_name }}</span>
-                    </div>
+                        <h2 class="fw-bold text-dark">RWF {{ order.total_amount|floatformat:0 }}</h2>
+                        </div>
 
                     <form id="fake-payment-form">
                         <div class="mb-3">
@@ -57,6 +56,7 @@
         
         // Wait 3 seconds to simulate network request, then redirect to success
         setTimeout(function() {
+            // Added tx_ref to the URL params as your view expects it
             window.location.href = "{% url 'livestock:payment_callback' %}?status=success&tx_ref={{ tx_ref }}";
         }, 3000);
     });
