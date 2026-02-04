@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'django.contrib.humanize',
+    
     # Third-party apps
     'rest_framework',  # <--- NEW API FRAMEWORK
     
@@ -99,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Kigali'
 USE_I18N = True
 USE_TZ = True
 

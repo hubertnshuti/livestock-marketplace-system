@@ -5,7 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from .views import home, for_farmers, for_buyers, about, contact
+from .views import home, for_farmers, for_buyers, about
+from accounts.views import contact_view, disclaimer_view, privacy_policy_view, terms_of_use_view
 
 # --- API SETUP ---
 from rest_framework.routers import DefaultRouter
@@ -27,7 +28,12 @@ urlpatterns = [
     path('about/', about, name='about'),
     path('for-farmers/', for_farmers, name='for_farmers'),
     path('for-buyers/', for_buyers, name='for_buyers'),
-    path('contact/', contact, name='contact'),
+    path("contact/", contact_view, name="contact"),
+    
+    path("disclaimer/", disclaimer_view, name="disclaimer"),
+    path("privacy-policy/", privacy_policy_view, name="privacy_policy"),
+    path("terms-of-use/", terms_of_use_view, name="terms_of_use"),
+
     
     # API ROUTES (http://127.0.0.1:8000/api/livestock/)
     path('api/', include(router.urls)),
