@@ -20,7 +20,7 @@ SECRET_KEY = 'django-insecure-68alxhuer$!*t8_8@4f%m1t!s(x^%zk*jp+-5i0^u$^u_$44j2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['172.31.234.93','*']
 
 
 # Application definition
@@ -124,3 +124,12 @@ LOGOUT_REDIRECT_URL = 'home'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- EMAIL CONFIGURATION (Gmail SMTP) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'itungohub@gmail.com'  
+EMAIL_HOST_PASSWORD = 'zrfi gbvx rojv zrbh'    
+DEFAULT_FROM_EMAIL = 'ItungoHub Support <itungohub@gmail.com>'

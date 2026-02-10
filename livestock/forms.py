@@ -60,3 +60,4 @@ class CheckoutContactForm(forms.ModelForm):  # <--- Changed 'models' to 'forms'
             'contact_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 078 000 0000'}),
             'delivery_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'District, Sector, Cell, specific landmark...'}),
         }
+        

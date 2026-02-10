@@ -40,6 +40,8 @@ urlpatterns = [
     
     # API Login helper (optional but good for testing)
     path('api-auth/', include('rest_framework.urls')),
+    # This activates: /accounts/password_reset/, /accounts/reset/done/, etc.
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:
