@@ -8,6 +8,7 @@ from django.urls import path, include
 from .views import home, for_farmers, for_buyers, about
 from accounts.views import contact_view, disclaimer_view, privacy_policy_view, terms_of_use_view
 
+
 # --- API SETUP ---
 from rest_framework.routers import DefaultRouter
 from livestock import api_views # Import the new API views
