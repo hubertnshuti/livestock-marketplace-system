@@ -154,13 +154,12 @@ To test the different user roles, you can use the following logic or create new 
 
 ## 📸 Screenshots
 
-| Landing Page | Farmer Dashboard |
+| Landing Page | Marketplace |
 |:---:|:---:|
-| <img src="docs/screenshots/home.png" alt="Home" width="400"> | <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="400"> |
+| <img width="1833" height="949" alt="image" src="https://github.com/user-attachments/assets/5f5d3491-893a-48be-a81a-fb06e54422a7" />
+ | <img width="1830" height="925" alt="image" src="https://github.com/user-attachments/assets/5badc34d-3ade-4702-a864-4af156d8ed94" />
+ |
 
-| Marketplace | Cart & Checkout |
-|:---:|:---:|
-| <img src="docs/screenshots/marketplace.png" alt="Marketplace" width="400"> | <img src="docs/screenshots/cart.png" alt="Cart" width="400"> |
 
 ---
 
@@ -170,12 +169,9 @@ This project was designed, developed, and documented by:
 
 | Name | Role | Student ID |
 | :--- | :--- | :--- |
-| **Hubert Nshuti Ngendahayo** | Full Stack Developer | [Insert ID] |
-| **Gilbert Nsengimana** | Database Architect | [Insert ID] |
-| **Jean Baptiste Niyonshuti** | System Analyst | [Insert ID] |
-
-> **University of Rwanda** > College of Science and Technology (CST)  
-> *Department of Computer and Software Engineering*
+| **Hubert Nshuti Ngendahayo** | Full Stack Developer | 
+| **Gilbert Nsengimana** | Database Architect | 
+| **Jean Baptiste Niyonshuti** | System Analyst |
 
 ---
 
