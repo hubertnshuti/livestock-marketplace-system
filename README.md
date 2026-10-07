@@ -167,7 +167,7 @@ To test the different user roles, you can use the following logic or create new 
 
 This project was designed, developed, and documented by:
 
-| Name | Role | Student ID |
+| Name | Role | 
 | :--- | :--- | :--- |
 | **Hubert Nshuti Ngendahayo** | Full Stack Developer | 
 | **Gilbert Nsengimana** | Database Architect | 
